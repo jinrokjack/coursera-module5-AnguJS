@@ -4,37 +4,22 @@
 angular.module('public')
 .controller('SignUpController', SignUpController);
 
-SignUpController.$inject = ['MenuService', 'MyInfoService'];
-function SignUpController(MenuService, MyInfoService) {
-  var $ctrl = this;
-  $ctrl.info = {};
+SignUpController.$inject = ['MenuService'];
+function SignUpController(MenuService) {
+  var $signUpCtrl = this;
 
-  $ctrl.submit = function() {
-      MenuService.getMenuItem($ctrl.info.favorite)
-        .then(function(response) {
-          $ctrl.invalidFavorite = false;
-          $ctrl.submitted = true;
-          MyInfoService.setInfo($ctrl.info);
-        })
-        .catch(function() {
-          $ctrl.invalidFavorite = true;
-        });
+  $signUpCtrl.submit = function() {
+    MenuService.getFavoriteDish($signUpCtrl.user.favoriteDish).then(function (response) {
+      $signUpCtrl.user.favDish = response.data;
+      MenuService.setUserProfile($signUpCtrl.user);
+      $signUpCtrl.success = true;
+      $signUpCtrl.error = false;
 
-
-    }
-
-    $ctrl.validateFavorite = function() {
-      MenuService.getMenuItem($ctrl.info.favorite)
-        .then(function () {
-          $ctrl.invalidFavorite = false;
-        })
-        .catch(function() {
-          $ctrl.invalidFavorite = true;
-        });
-    }
-
+    }, function (response) {
+      $signUpCtrl.success = false;
+      $signUpCtrl.error = true;
+    });
   };
-
+}
 
 })();
-
